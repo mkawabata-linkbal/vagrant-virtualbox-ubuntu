@@ -1,0 +1,66 @@
+---
+- hosts: all
+  sudo: yes
+  user: vagrant
+  vars:
+    vagrant_home: "/home/vagrant"
+  tasks:
+    - name: updates a server
+      apt: update_cache=yes
+
+    - name: upgrade a server
+      apt: upgrade=full
+
+    - name: install packages
+      apt: pkg={{ item }} update_cache=yes
+      with_items:
+        - build-essential
+        - ntp
+        - sysstat
+        - libwww-perl
+        - sysv-rc-conf
+        - procinfo
+        - python-setuptools
+        - unzip
+        - sysbench
+        - xfsprogs
+        - git
+        - git-core
+        - libssl-dev
+        - libqt4-dev
+        - libc6-dev
+        - automake
+        - libtool
+        - libyaml-dev
+        - zlib1g
+        - zlib1g-dev
+        - openssl
+        - libssl-dev
+        - libreadline-dev
+        - libxml2-dev
+        - libxslt1-dev
+        - libncurses5-dev
+        - pkg-config
+        - chrpath
+        - libfontconfig1-dev
+        - libxft-dev
+        - docker.io
+
+    - name: create synbolic link docker.io
+      file: src=/usr/bin/docker.io  dest=/usr/local/bin/docker owner=vagrant group=vagrant state=link
+
+    - name: remove package apparmor
+      command: update-rc.d -f apparmor remove
+      tags:
+        - common-packages
+
+    - name: disable startup service
+      shell: sysv-rc-conf --level 123456 {{ item }} off
+      tags:
+        - common-packages
+      with_items:
+        - dns-clean
+        - apparmor
+        - apport
+        - pppd-dns
+

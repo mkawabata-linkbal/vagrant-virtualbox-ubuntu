@@ -27,23 +27,7 @@
         - git
         - git-core
         - libssl-dev
-        - libqt4-dev
-        - libc6-dev
-        - automake
-        - libtool
-        - libyaml-dev
-        - zlib1g
-        - zlib1g-dev
         - openssl
-        - libssl-dev
-        - libreadline-dev
-        - libxml2-dev
-        - libxslt1-dev
-        - libncurses5-dev
-        - pkg-config
-        - chrpath
-        - libfontconfig1-dev
-        - libxft-dev
         - docker.io
 
     - name: create synbolic link docker.io
@@ -51,16 +35,18 @@
 
     - name: remove package apparmor
       command: update-rc.d -f apparmor remove
-      tags:
-        - common-packages
 
     - name: disable startup service
       shell: sysv-rc-conf --level 123456 {{ item }} off
-      tags:
-        - common-packages
       with_items:
         - dns-clean
         - apparmor
         - apport
         - pppd-dns
+
+    - name: backup localtime file
+      command: cp -p /etc/localtime /etc/localtime.org creates=/etc/localtime.org
+
+    - name: modify time zone
+      command: ln -snf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime 
 

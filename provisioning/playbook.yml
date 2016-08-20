@@ -45,7 +45,7 @@
         - pppd-dns
 
     - name: backup localtime file
-      command: cp -p /etc/localtime /etc/localtime.org creates=/etc/localtime.org
+      command: mv /etc/localtime /etc/localtime.org creates=/etc/localtime.org
 
     - name: modify time zone
       file: src=/usr/share/zoneinfo/Asia/Tokyo dest=/etc/localtime state=link
